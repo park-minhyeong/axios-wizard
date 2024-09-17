@@ -14,8 +14,9 @@ After that, call the handler function to declare the API controller.
 import { handler } from "axios-wizard";
 
 const apiConfig: Record<string, string>={
-	some: 'https://api.some.com'
-	some2: import.meta.env.SOME2_API_ORIGIN
+	some: 'https://api.some.com',
+	some2: process.env.SOME2_API_ORIGIN
+	some3: import.meta.env.SOME3_API_ORIGIN
 	...
 }
 
