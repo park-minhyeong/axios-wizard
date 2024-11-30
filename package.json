@@ -1,6 +1,6 @@
 {
   "name": "axios-wizard",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "handle axios easily",
   "scripts": {
     "build-publish": "rimraf ./dist && tsc -p tsconfig.build.json --noEmit false",
