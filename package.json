@@ -1,6 +1,6 @@
 {
   "name": "axios-wizard",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "handle axios easily",
   "scripts": {
     "build-publish": "rimraf ./dist && tsc -p tsconfig.build.json --noEmit false",
@@ -22,13 +22,13 @@
     "rimraf": "^5.0.5",
     "@types/node": "^20.11.4"
   },
-  "main": "./dist/index.js",          
-  "module": "./dist/index.js",        
-  "types": "./dist/index.d.ts",     
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",  
-      "import": "./dist/index.js"   
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
     }
   }
 }
