@@ -6,7 +6,7 @@
     "build-publish": "rimraf ./dist && tsc -p tsconfig.build.json --noEmit false",
     "publish": "npm run build-publish && node setupPackage.js && cd dist && npm publish",
     "test": "ts-node src/test.ts",
-    "upload": "npm run build-publish && npm version patch && node setupPackage.js && cd dist && npm publish"
+    "upload": "npm run build-publish && npm version patch && node setupPackage.js && cd dist && npm publish && git push && git push --tags"
   },
   "keywords": [
     "axios",
