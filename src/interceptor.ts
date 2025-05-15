@@ -27,7 +27,6 @@ const shouldAttemptRefresh = (context: TokenHandlerContext, error: any): boolean
   return (
     error.response?.status === 401 &&
     !originalConfig._retry &&
-    originalConfig.url !== config.accessEndpoint &&
     !!config.getRefreshToken &&
     !!config.getToken
   );

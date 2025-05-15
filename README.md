@@ -160,7 +160,6 @@ interface Option {
 interface TokenConfig {
   accessTokenKey?: string;
   refreshTokenKey?: string;
-  accessEndpoint?: string;
   refreshEndpoint?: string;
   getToken?: () => string | undefined;
   setToken?: (token: string) => void;
