@@ -1,46 +1,203 @@
-# AXIOS Wizard
-While working on client-server integration and external API integration, I started to feel the limitations of fetch. Axios offered a variety of config options, making it convenient, but setting it up for each project became tedious. To solve this issue, I created axios-wizard and published it on npm.
+# Axios Wizard 🧙‍♂️
 
-After finishing it, this thought came to mind:
+A powerful TypeScript wrapper for Axios that provides enhanced features including token management, interceptors, and type-safe HTTP requests.
 
-`axios is under-controlled`
+## Features
 
-## HOW TO USE
-First, create an object that defines the origin of the API server. The key is the server’s name, and the value is its address. 
+- 🔒 Built-in token management (access & refresh tokens)
+- 🎯 Type-safe HTTP requests
+- 🔄 Automatic token refresh
+- 🎨 Customizable interceptors
+- 🛠 Flexible configuration options
+- 📝 Content-type and charset management
 
-After that, call the handler function to declare the API controller.
+## Installation
 
-```typescript
-import { handler } from "axios-wizard";
-
-const apiConfig: Record<string, string>={
-	some: 'https://api.some.com',
-	some2: process.env.SOME2_API_ORIGIN
-	some3: import.meta.env.SOME3_API_ORIGIN
-	...
-}
-
-const httpRequest = handler(apiConfig)
+```bash
+npm install axios-wizard
+# or
+yarn add axios-wizard
 ```
 
-It is possible to write the API call function as follows.
+## Basic Usage
+
 ```typescript
-// api.ts
-const apiUndefined = httpRequest.some() // end-point is https://api.some.com
-const apiV1 = httpRequest.some("v1") // end-point is https://api.some.com/v1
+import { handler } from 'axios-wizard';
 
-async function getTest(){
-	const response = await apiV1.get("/test") // end-point is https://api.some.com/v1/test, and can generic
-	return response.data; // return type is AxiosConfig
+// Define API endpoints configuration
+const apiConfig: Record<string, string> = {
+  users: 'https://api.users.com',
+  products: 'https://api.products.com'
+};
+
+// Create API handlers
+const api = handler(apiConfig);
+
+// Make type-safe requests
+interface User {
+  id: number;
+  name: string;
 }
 
-interface Test{
-	a: string
+// GET request with version and without version
+const userApi = api.users('v1'); // https://api.users.com/v1
+const legacyUserApi = api.users(); // https://api.users.com
+
+const getUser = async (id: number) => {
+  const response = await userApi.get<User>(`/users/${id}`);
+  return response.data;
+};
+
+// POST request with type-safe request body
+interface CreateUserRequest {
+  name: string;
+  email: string;
 }
 
-async function getTestWithGeneric(){
-	const response = await apiV1.get<Test>("/test") // can empower generic type
-	return response.data; // return type is AxiosConfig
-}
-
+const createUser = async (userData: CreateUserRequest) => {
+  const response = await userApi.post<CreateUserRequest, User>('/users', userData);
+  return response.data;
+};
 ```
+
+## Advanced Configuration
+
+### Token Management
+
+```typescript
+const userApi = api.users('v1', {
+  interceptor: {
+    tokenConfig: {
+      // Token storage configuration
+      getToken: () => localStorage.getItem('access_token'),
+      setToken: (token) => localStorage.setItem('access_token', token),
+      removeToken: () => localStorage.removeItem('access_token'),
+      
+      // Refresh token configuration
+      getRefreshToken: () => localStorage.getItem('refresh_token'),
+      setRefreshToken: (token) => localStorage.setItem('refresh_token', token),
+      removeRefreshToken: () => localStorage.removeItem('refresh_token'),
+      
+      // Endpoints
+      refreshEndpoint: '/auth/refresh',
+      
+      // Optional: Custom header format
+      formatAuthHeader: (token) => ({
+        'Authorization': `Custom ${token}`
+      }),
+      
+      // Optional: Token expiry callback
+      onTokenExpired: () => {
+        // Handle token expiration (e.g., redirect to login)
+      }
+    }
+  }
+});
+```
+
+### Custom Interceptors
+
+```typescript
+const userApi = api.users('v1', {
+  interceptor: {
+    onRequest: (config) => {
+      // Modify request config
+      config.headers['Custom-Header'] = 'value';
+      return config;
+    },
+    onResponse: (response) => {
+      // Transform response data
+      response.data = response.data.result;
+      return response;
+    },
+    onError: async (error) => {
+      // Custom error handling
+      if (error.response?.status === 404) {
+        // Handle 404 error
+      }
+      return Promise.reject(error);
+    }
+  }
+});
+```
+
+### API Versioning & Content Type
+
+```typescript
+const userApi = api.users('v1', {
+  // API version will be added to base URL
+  version: 'v1',
+  
+  // Content type configuration
+  contentType: 'application/json',
+  charset: 'UTF-8',
+  accept: 'application/json'
+});
+
+// Results in: https://api.example.com/v1
+// Headers: 
+// Content-Type: application/json; charset=UTF-8
+// Accept: application/json
+```
+
+## Type Definitions
+
+### Option Interface
+
+```typescript
+interface Option {
+  version?: string;
+  contentType?: DataType;
+  accept?: DataType;
+  charset?: string;
+  interceptor?: Interceptor;
+}
+```
+
+### TokenConfig Interface
+
+```typescript
+interface TokenConfig {
+  accessTokenKey?: string;
+  refreshTokenKey?: string;
+  accessEndpoint?: string;
+  refreshEndpoint?: string;
+  getToken?: () => string | undefined;
+  setToken?: (token: string) => void;
+  removeToken?: () => void;
+  getRefreshToken?: () => string | undefined;
+  setRefreshToken?: (token: string) => void;
+  removeRefreshToken?: () => void;
+  onTokenExpired?: () => void;
+  formatAuthHeader?: (token: string, refreshToken?: string) => Record<string, string>;
+}
+```
+
+## Error Handling
+
+```typescript
+try {
+  const response = await api.get('/protected-resource');
+  // Handle success
+} catch (error) {
+  if (error.response) {
+    // Server responded with error status
+    console.error('Status:', error.response.status);
+    console.error('Data:', error.response.data);
+  } else if (error.request) {
+    // Request was made but no response received
+    console.error('No response received');
+  } else {
+    // Error in setting up the request
+    console.error('Error:', error.message);
+  }
+}
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT
