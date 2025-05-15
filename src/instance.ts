@@ -1,25 +1,30 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { Http, Options } from "./interface";
+import { Http, Option } from "./interface";
 import { axiosRequestConfig, createAxiosDefaults } from "./config";
+import { setupInterceptors } from "./interceptor";
 
-function instance(baseUrl: string, options?: Options): Http {
-  const instance = axios.create(
+function instance(baseUrl: string, option?: Option): Http {
+  const axiosInstance = axios.create(
     createAxiosDefaults({
       baseUrl,
-      options,
+      option,
     })
   );
+  if (option?.interceptor) {
+    setupInterceptors(axiosInstance, option.interceptor);
+  }
   return {
     get: <RES>(url: string, config?: AxiosRequestConfig) =>
-      instance.get<RES>(url, { ...axiosRequestConfig, ...config }),
+      axiosInstance.get<RES>(url, { ...axiosRequestConfig, ...config }),
     post: <REQ, RES>(url: string, data?: REQ, config?: AxiosRequestConfig) =>
-      instance.post<RES>(url, data, { ...axiosRequestConfig, ...config }),
+      axiosInstance.post<RES>(url, data, { ...axiosRequestConfig, ...config }),
     put: <REQ, RES>(url: string, data?: REQ, config?: AxiosRequestConfig) =>
-      instance.put<RES>(url, data, { ...axiosRequestConfig, ...config }),
+      axiosInstance.put<RES>(url, data, { ...axiosRequestConfig, ...config }),
     patch: <REQ, RES>(url: string, data?: REQ, config?: AxiosRequestConfig) =>
-      instance.patch<RES>(url, data, { ...axiosRequestConfig, ...config }),
+      axiosInstance.patch<RES>(url, data, { ...axiosRequestConfig, ...config }),
     delete: <RES>(url: string, data?: object) =>
-      instance.delete<RES>(url, { ...data, ...axiosRequestConfig }),
+      axiosInstance.delete<RES>(url, { ...data, ...axiosRequestConfig }),
+    getInstance: () => axiosInstance
   };
 }
 

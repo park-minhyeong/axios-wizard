@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 interface Http {
   get: <RES = unknown>(
     url: string,
@@ -23,6 +23,7 @@ interface Http {
     url: string,
     data?: AxiosRequestConfig
   ) => Promise<AxiosResponse<RES>>;
+  getInstance: () => AxiosInstance;
 }
 
 export type { Http };
