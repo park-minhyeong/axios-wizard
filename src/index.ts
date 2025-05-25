@@ -8,12 +8,12 @@ type Handler<T> = {
   ) => Http;
 };
 
-function handler<T extends Record<string, string>>(obj: T): Handler<T> {
+function handler<T extends Record<string, string>>(obj: T, globalOption?: Option): Handler<T> {
   return Object.keys(obj).reduce<Handler<T>>((acc, cur) => {
     acc[cur as keyof T] = (
       version?: string,
       option?: Omit<Option, "version">
-    ) => instance(obj[cur], { version, ...option });
+    ) => instance(obj[cur], { version, ...globalOption, ...option });
     return acc;
   }, {} as Handler<T>);
 }

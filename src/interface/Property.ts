@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 type DataType =
   | "application/json"
@@ -37,6 +37,7 @@ interface Option {
   accept?: DataType;
   charset?: string;
   interceptor?: Interceptor;
+  requestConfig?: AxiosRequestConfig;
 }
 
 export type { Option, DataType };
