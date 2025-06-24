@@ -1,6 +1,6 @@
 {
   "name": "axios-wizard",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "handle axios easily",
   "main": "index.js",
   "module": "./dist/index.js",
