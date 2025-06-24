@@ -2,6 +2,15 @@
   "name": "axios-wizard",
   "version": "1.0.9",
   "description": "handle axios easily",
+  "main": "index.js",
+  "module": "./dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build-publish": "rimraf ./dist && tsc -p tsconfig.build.json --noEmit false",
     "publish": "npm run build-publish && node setupPackage.js && cd dist && npm publish",
